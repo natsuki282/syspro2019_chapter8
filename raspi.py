@@ -6,16 +6,19 @@ from firebase_admin import firestore
 import time
 import RPi.GPIO as GPIO
 import smbus
+from smbus2 import SMBus
 import datetime
 import json
 import os
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/pi/syspro-chapter8.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "/home/pi/syspro_firebase_secret.json"
 
-cred = credentials.Certificate('/home/pi/syspro-chapter8.json')
+cred = credentials.Certificate('/home/pi/syspro_firebase_secret.json')
 firebase_admin.initialize_app(cred)
 i2c = smbus.SMBus(1)
 address = 0x48
+
+GPIO.setwarnings(False)
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(14, GPIO.OUT)
@@ -33,9 +36,11 @@ def on_snapshot(doc_snapshot, changes, read_time):
         print(u'LED: {}'.format(led))
         if led == "ON":
             print "ON"
+            GPIO.output(14, GPIO.HIGH)
             # ONにする処理
         elif led == "OFF":
             print "OFF"
+            GPIO.output(14,GPIO.LOW)
             # OFFにする処理
 
 
